@@ -1,0 +1,54 @@
+{
+  "python": "3.12.3",
+  "platform": "macOS-26.2-arm64-arm-64bit",
+  "runs": [
+    {
+      "position": "empty-opening",
+      "input": "xxxxxxxxxxxxxxxxxxxxxxx",
+      "transpositions": false,
+      "depth": 6,
+      "nodes": 57440,
+      "evaluations": 41836,
+      "table_hits": 0,
+      "seconds": 0.8752,
+      "score": 8,
+      "selected": "xxxxxWxxxxxxxxxxxxxxxxx"
+    },
+    {
+      "position": "empty-opening",
+      "input": "xxxxxxxxxxxxxxxxxxxxxxx",
+      "transpositions": true,
+      "depth": 6,
+      "nodes": 29678,
+      "evaluations": 17987,
+      "table_hits": 3670,
+      "seconds": 0.5313,
+      "score": 8,
+      "selected": "xxxxxWxxxxxxxxxxxxxxxxx"
+    },
+    {
+      "position": "handout-game",
+      "input": "xxxxxBxWWWWWBBBBxxxxxxx",
+      "transpositions": false,
+      "depth": 6,
+      "nodes": 6386,
+      "evaluations": 3966,
+      "table_hits": 0,
+      "seconds": 0.0794,
+      "score": -26,
+      "selected": "WxxxxBxWxWWWBBBBxxxxxxx"
+    },
+    {
+      "position": "handout-game",
+      "input": "xxxxxBxWWWWWBBBBxxxxxxx",
+      "transpositions": true,
+      "depth": 6,
+      "nodes": 3150,
+      "evaluations": 1766,
+      "table_hits": 456,
+      "seconds": 0.0387,
+      "score": -26,
+      "selected": "WxxxxBxWxWWWBBBBxxxxxxx"
+    }
+  ]
+}

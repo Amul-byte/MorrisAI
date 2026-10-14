@@ -1,0 +1,104 @@
+{
+  "python": "3.12.3",
+  "platform": "macOS-26.2-arm64-arm-64bit",
+  "seconds_per_move": 2.0,
+  "maximum_depth": 3,
+  "max_plies": 140,
+  "elapsed": 1.12,
+  "opponent": "same alpha-beta engine with handout baseline evaluation",
+  "outcomes_for_improved": {
+    "win": 5,
+    "loss": 2,
+    "draw": 1
+  },
+  "games": [
+    {
+      "seed": 4346,
+      "improved_side": "W",
+      "initial": "WWBxxxxxBBxxxxxxxxxxxxW",
+      "outcome": "win",
+      "reason": "win",
+      "plies": 49,
+      "mean_depth": 2.93,
+      "nodes": 13058,
+      "max_search_seconds": 0.0339
+    },
+    {
+      "seed": 4346,
+      "improved_side": "B",
+      "initial": "WWBxxxxxBBxxxxxxxxxxxxW",
+      "outcome": "win",
+      "reason": "win",
+      "plies": 28,
+      "mean_depth": 2.86,
+      "nodes": 6595,
+      "max_search_seconds": 0.0074
+    },
+    {
+      "seed": 4347,
+      "improved_side": "W",
+      "initial": "xxxxxWxBxBxxxxxxxWBWxxx",
+      "outcome": "win",
+      "reason": "win",
+      "plies": 29,
+      "mean_depth": 2.87,
+      "nodes": 8631,
+      "max_search_seconds": 0.013
+    },
+    {
+      "seed": 4347,
+      "improved_side": "B",
+      "initial": "xxxxxWxBxBxxxxxxxWBWxxx",
+      "outcome": "loss",
+      "reason": "win",
+      "plies": 39,
+      "mean_depth": 2.91,
+      "nodes": 9843,
+      "max_search_seconds": 0.0114
+    },
+    {
+      "seed": 4348,
+      "improved_side": "W",
+      "initial": "BxWxxxxBWxxxxxWBxxxxxxx",
+      "outcome": "win",
+      "reason": "win",
+      "plies": 25,
+      "mean_depth": 2.84,
+      "nodes": 6199,
+      "max_search_seconds": 0.0119
+    },
+    {
+      "seed": 4348,
+      "improved_side": "B",
+      "initial": "BxWxxxxBWxxxxxWBxxxxxxx",
+      "outcome": "draw",
+      "reason": "threefold",
+      "plies": 44,
+      "mean_depth": 3.0,
+      "nodes": 9080,
+      "max_search_seconds": 0.0114
+    },
+    {
+      "seed": 4349,
+      "improved_side": "W",
+      "initial": "xxxWxxxxxWBxxxxxBWxxxxx",
+      "outcome": "win",
+      "reason": "win",
+      "plies": 31,
+      "mean_depth": 2.88,
+      "nodes": 9132,
+      "max_search_seconds": 0.0129
+    },
+    {
+      "seed": 4349,
+      "improved_side": "B",
+      "initial": "xxxWxxxxxWBxxxxxBWxxxxx",
+      "outcome": "loss",
+      "reason": "win",
+      "plies": 45,
+      "mean_depth": 2.92,
+      "nodes": 8911,
+      "max_search_seconds": 0.0178
+    }
+  ]
+}
