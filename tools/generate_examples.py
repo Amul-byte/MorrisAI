@@ -1,13 +1,3 @@
-"""Rewrite Examples.txt from real runs of the assignment programs.
-
-    python3 -m tools.generate_examples
-
-Every printed result comes from running the program on a file in assets/.
-The script stops if alpha-beta no longer matches MINIMAX, if the improved
-estimator no longer picks a different move, or if MyStaticEstimation.txt
-quotes a move the programs no longer choose.
-"""
-
 from pathlib import Path
 import subprocess
 import sys
