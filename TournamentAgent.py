@@ -105,7 +105,7 @@ def check_settings(seconds, depth) -> None:
 
 def time_warning(seconds: float) -> str | None:
     if seconds > POSTING_MARGIN:
-        return (f"Warning: a {seconds:g}s search leaves less than a minute to paste and post "
+        return (f"Warning: a {seconds:g}s search leaves little or no time to paste and post "
                 f"within the 4 minutes after the opponent posts.")
     return None
 
