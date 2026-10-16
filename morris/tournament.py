@@ -15,9 +15,20 @@ from typing import Callable
 from .board import (Board, MILLS_AT, closes_mill, game_winner,
                     generate_moves, opponent)
 from .evaluation import WIN, baseline, improved
-from .search import INF, SearchResult
 
+INF = 10**12
 PositionKey = tuple[int, int, str]
+
+
+@dataclass(slots=True)
+class SearchResult:
+    board: Board
+    score: int
+    evaluations: int
+    nodes: int
+    depth: int
+    elapsed: float = 0.0
+    timed_out: bool = False
 
 
 def position_key(board: Board, side: str) -> PositionKey:

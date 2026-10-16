@@ -4,7 +4,7 @@ import unittest
 
 from morris.board import Board, game_winner, generate_moves, opponent
 from morris.evaluation import WIN, improved
-from morris.search import fixed_search
+from tests.program_search import fixed_search
 from morris.tournament import TournamentSearch, position_key
 from tests import reference
 from tests.test_rules import make_board

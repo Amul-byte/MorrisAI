@@ -7,14 +7,14 @@ A dependency-free Python implementation of the exact **23-position variant** in
 ## Assignment programs
 
 ```sh
-python3 MiniMaxOpening.py tests/fixtures/opening.txt board2.txt 3
-python3 MiniMaxGame.py tests/fixtures/handout-game.txt board2.txt 3
-python3 ABOpening.py tests/fixtures/opening.txt board2.txt 3
-python3 ABGame.py tests/fixtures/handout-game.txt board2.txt 3
-python3 MiniMaxOpeningBlack.py tests/fixtures/opening.txt board2.txt 3
-python3 MiniMaxGameBlack.py tests/fixtures/handout-game.txt board2.txt 3
-python3 MiniMaxOpeningImproved.py tests/fixtures/opening.txt board2.txt 3
-python3 MiniMaxGameImproved.py tests/fixtures/handout-game.txt board2.txt 3
+python3 MiniMaxOpening.py assets/empty_board.txt board2.txt 3
+python3 MiniMaxGame.py assets/handout_position_1.txt board2.txt 3
+python3 ABOpening.py assets/empty_board.txt board2.txt 3
+python3 ABGame.py assets/handout_position_1.txt board2.txt 3
+python3 MiniMaxOpeningBlack.py assets/empty_board.txt board2.txt 3
+python3 MiniMaxGameBlack.py assets/handout_position_1.txt board2.txt 3
+python3 MiniMaxOpeningImproved.py assets/empty_board.txt board2.txt 3
+python3 MiniMaxGameImproved.py assets/handout_position_1.txt board2.txt 3
 ```
 
 Every program accepts `input output depth`. Input and output contain one
@@ -37,10 +37,10 @@ evaluation result, not another legal move to post.
 
 ## Running an actual game
 
-White starts from the empty fixture. This command chooses **move 1**:
+White starts from the empty board in `assets/`. This command chooses **move 1**:
 
 ```sh
-python3 TournamentAgent.py tests/fixtures/empty.txt my-move.txt \
+python3 TournamentAgent.py assets/empty_board.txt my-move.txt \
   --side W --move-number 1 --time-limit 180 --history game-white.json
 ```
 
@@ -99,13 +99,17 @@ again. On an error, fix the input/history before using an existing output file.
 
 | File | Responsibility |
 | --- | --- |
+| `MiniMaxOpening.py`, `MiniMaxGame.py` | Part I MINIMAX, written out in the program (`best_move`, `max_value`, `min_value`) |
+| `ABOpening.py`, `ABGame.py` | Part II ALPHA-BETA, same move order and tie rule as MINIMAX |
+| `*Black.py`, `*Improved.py` | Parts III and IV: reuse the Part I classes with a color swap or the improved estimator |
 | `morris/board.py` | Bitboard representation, diagram topology, legal moves, wins |
 | `morris/evaluation.py` | Literal handout estimators and documented positional features |
-| `morris/search.py` | Full MINIMAX and canonical-order ALPHA-BETA |
 | `morris/tournament.py` | Timed iterative deepening, alpha-beta, ordering, bounded caches |
 | `morris/cli.py`, `morris/history_io.py` | Required interface and atomic file writes |
 | `TournamentAgent.py` | Placement counts, game history, turn validation, posting format |
+| `assets/` | The empty board and the two positions drawn in the handout |
 | `tests/reference.py` | Independent string-based rule/search oracle |
+| `tests/program_search.py` | Lets the tests call the programs' search classes directly |
 
 Tournament search stays full-width alpha-beta: no stochastic search, selective
 move omissions, or learned policy. Previous best moves, captures, killer moves,
@@ -136,8 +140,10 @@ use paired starting positions and alternate the improved agent's color; unfinish
 games at the move cap are reported separately from draws. Historical results and
 their limits are in `benchmarks/RESULTS.md`. They are not official match results.
 
-Submit `dist/MorrisAI-submission.zip`. It includes all required scripts, examples,
-evaluation rationale, **the shared `morris/` package**, and reproducibility tools.
-Do not submit only the thin top-level scripts: they import the shared package.
+Submit `dist/MorrisAI-submission.zip` (the same files are in
+`dist/MorrisAI-submission/`). It holds the nine programs, `Examples.txt`,
+`MyStaticEstimation.txt`, **the shared `morris/` package**, and `assets/`.
+`tools.package_submission` runs every program from an unzipped copy before it
+finishes. Do not submit the programs without `morris/`: they import it.
 Actual team identifiers, official matches, Teams records, and result submission
 remain operational tasks described in `project.md`.

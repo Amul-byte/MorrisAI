@@ -119,7 +119,7 @@ def main() -> None:
                   file=sys.stderr)
     except (OSError, ValueError, TypeError) as error:
         parser.error(str(error))
-    print_result(result)
+    print_result(result.board, result.evaluations, result.score)
     print(f"Completed depth: {result.depth}; elapsed: {result.elapsed:.3f}s", file=sys.stderr)
     if result.depth == 0:
         print("Used legal fallback; no search iteration completed. Estimate is a placeholder.",
