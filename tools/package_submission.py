@@ -26,7 +26,7 @@ PROGRAMS = [
 ]
 TEXT = ["Examples.txt", "MyStaticEstimation.txt"]
 MODULES = ["__init__.py", "board.py", "cli.py", "evaluation.py", "history_io.py", "tournament.py"]
-ASSETS = ["empty_board.txt", "handout_position_1.txt", "handout_position_2.txt"]
+ASSETS = ["empty_board.txt", "handout_position_1.txt", "handout_position_2.txt", "improved_opening.txt"]
 
 
 def files():

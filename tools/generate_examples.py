@@ -20,24 +20,20 @@ ROOT = Path(__file__).resolve().parents[1]
 FEATURES = ("pieces", "mills", "threats", "forks", "mobility", "blocked", "connections")
 POSITION_1 = "handout_position_1"
 POSITION_2 = "handout_position_2"
+IMPROVED_OPENING = "improved_opening"
 
 PART_II = [
     ("opening", POSITION_1, "MiniMaxOpening", "ABOpening"),
     ("midgame", POSITION_2, "MiniMaxGame", "ABGame"),
 ]
 PART_IV = [
-    ("opening", POSITION_2, "MiniMaxOpening", "MiniMaxOpeningImproved",
-     "Both moves close a mill and remove the same Black piece, so the original function "
-     "gives them the same score and keeps the first one, d0. The improved function prefers "
-     "a6, which lies on three mill lines, over d0, which lies on one. After the move, White's "
-     "connection advantage is 7 instead of 5, White has 2 more free neighboring squares than "
-     "Black instead of an equal number, and one blocked piece more than Black instead of two. "
-     "The search also checked Black's reply at depth 2."),
+    ("opening", IMPROVED_OPENING, "MiniMaxOpening", "MiniMaxOpeningImproved",
+     "Both placements create an a0-d0-g0 mill threat. The baseline keeps d0 because the material scores tie. The improved move chooses g0, which belongs to three mill lines rather than one. After the move, White's connectivity advantage is 3 instead of 1 and its mobility advantage is 2 instead of 0. The depth-2 search also considers Black's reply. These are positional preferences, not a forced-win claim."),
     ("midgame", POSITION_2, "MiniMaxGame", "MiniMaxGameImproved",
      "It slides b1 to d1. From d1 the piece can slide on to d0 and close a0-d0-g0, and a0 or "
      "b3 can slide into b1 and close b1-d1-f1, so White has two different mill-closing squares "
-     "instead of one: the threat difference becomes +2 instead of +1. Black would need two "
-     "moves to cover both. The price is that White's a0-b1-c2 mill is open for now (mills -1 "
+     "instead of one: the threat difference becomes +2 instead of +1. Black cannot occupy both "
+     "destinations in one move, but may disrupt the threats by capturing a supporting piece. The price is that White's a0-b1-c2 mill is open for now (mills -1 "
      "instead of 0) and its mobility lead is +2 instead of +3. The original move, a3 to a6, blocks Black's "
      "c4-b5-a6 line and leaves Black 5 moves instead of 6, which is the only thing besides "
      "material that the original midgame function measures."),
@@ -89,7 +85,7 @@ def feature_difference(board_text, phase):
 
 def main():
     boards = {name: (ROOT / "assets" / f"{name}.txt").read_text().strip()
-              for name in (POSITION_1, POSITION_2)}
+              for name in (POSITION_1, POSITION_2, IMPROVED_OPENING)}
     out = [
         "Morris AI - Team 7",
         "",
@@ -100,9 +96,10 @@ def main():
         "           a different move than the original one, with a reason for preferring it.",
         "",
         "Each case shows the exact command and the three lines the submitted program printed.",
-        "Input files, in the assets/ folder, are the two positions drawn in the Morris Variant handout:",
+        "Input files in assets/: two handout positions and one additional opening position:",
         f"  assets/{POSITION_1}.txt = {boards[POSITION_1]}",
         f"  assets/{POSITION_2}.txt = {boards[POSITION_2]}",
+        f"  assets/{IMPROVED_OPENING}.txt = {boards[IMPROVED_OPENING]}",
         'Depth counts individual turns (plies). "Positions evaluated" counts calls to the static estimator.',
         "",
         "",
@@ -126,6 +123,7 @@ def main():
     out += ["", "PART IV: IMPROVED STATIC ESTIMATION SELECTS A DIFFERENT MOVE",
             "Scores from the two estimators use different scales. We compare the chosen moves, not the numbers.",
             ""]
+    assert len({boards[case[1]] for case in PART_IV}) >= 2
     quoted = (ROOT / "MyStaticEstimation.txt").read_text()
     for number, (phase, name, original, improved, reason) in enumerate(PART_IV, 1):
         original_command, before = run(original, name, 2)

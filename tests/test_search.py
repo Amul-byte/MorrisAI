@@ -31,6 +31,25 @@ def exhaustive(board, side, placements, depth, counts):
 
 
 class FixedSearchTests(unittest.TestCase):
+    def test_terminal_scores_count_actual_estimator_calls(self):
+        from MiniMaxGame import GameMinimax
+        from ABGame import GameAlphaBeta
+        from morris.evaluation import baseline
+        positions = [make_board([0, 1, 2], [8, 9]),
+                     make_board([0, 1], [8, 9, 10]),
+                     make_board([0, 1, 2, 4], [3, 5, 8, 13])]
+        for search_class in (GameMinimax, GameAlphaBeta):
+            for board in positions:
+                for judge_horizon in (False, True):
+                    calls = []
+                    def recorded(position, opening):
+                        calls.append(position)
+                        return baseline(position, opening)
+                    search = search_class(estimate=recorded, judge_horizon=judge_horizon)
+                    search.best_move(board, 2)
+                    self.assertEqual(search.positions_evaluated, len(calls))
+                    self.assertEqual(len(calls), 1)
+
     def test_minimax_against_string_oracle_and_alpha_beta(self):
         samples = [(Board(0, 0), True, 3),
                    (make_board([0, 3, 7], [2, 5, 9]), True, 3),

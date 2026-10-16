@@ -7,9 +7,10 @@ This file answers two requirements of the project handout:
            a different move than the original one, with a reason for preferring it.
 
 Each case shows the exact command and the three lines the submitted program printed.
-Input files, in the assets/ folder, are the two positions drawn in the Morris Variant handout:
+Input files in assets/: two handout positions and one additional opening position:
   assets/handout_position_1.txt = xxxxxBxWWWWWBBBBxxxxxxx
   assets/handout_position_2.txt = WxWWxWWWWWBBBBBBBBxxxxx
+  assets/improved_opening.txt = WxxBxxxxxxxxxxxxxxxxxxx
 Depth counts individual turns (plies). "Positions evaluated" counts calls to the static estimator.
 
 
@@ -60,27 +61,27 @@ PART IV: IMPROVED STATIC ESTIMATION SELECTS A DIFFERENT MOVE
 Scores from the two estimators use different scales. We compare the chosen moves, not the numbers.
 
 Case 1 (opening, depth 2)
-Input board: WxWWxWWWWWBBBBBBBBxxxxx
+Input board: WxxBxxxxxxxxxxxxxxxxxxx
 
 ORIGINAL ESTIMATION:
-  $ python3 MiniMaxOpening.py assets/handout_position_2.txt board2.txt 2
-  Board Position: WWWWxWWWWWBBBBBBBxxxxxx
-  Positions evaluated by static estimation: 76
-  MINIMAX estimate: 1
-  Move: White places a piece at d0 and removes the Black piece at b5
+  $ python3 MiniMaxOpening.py assets/improved_opening.txt board2.txt 2
+  Board Position: WWxBxxxxxxxxxxxxxxxxxxx
+  Positions evaluated by static estimation: 420
+  MINIMAX estimate: 0
+  Move: White places a piece at d0
 
 IMPROVED ESTIMATION:
-  $ python3 MiniMaxOpeningImproved.py assets/handout_position_2.txt board2.txt 2
-  Board Position: WxWWxWWWWWBBBBBBBxxxWxx
-  Positions evaluated by static estimation: 76
-  MINIMAX estimate: 203
-  Move: White places a piece at a6 and removes the Black piece at b5
+  $ python3 MiniMaxOpeningImproved.py assets/improved_opening.txt board2.txt 2
+  Board Position: WxWBxxxxxxxxxxxxxxxxxxx
+  Positions evaluated by static estimation: 420
+  MINIMAX estimate: -4
+  Move: White places a piece at g0
 
 Feature differences after each move (White minus Black):
-  original move: {'pieces': 2, 'mills': 1, 'threats': 3, 'forks': 0, 'mobility': 0, 'blocked': 2, 'connections': 5}
-  improved move: {'pieces': 2, 'mills': 1, 'threats': 3, 'forks': 0, 'mobility': 2, 'blocked': 1, 'connections': 7}
+  original move: {'pieces': 1, 'mills': 0, 'threats': 1, 'forks': 0, 'mobility': 0, 'blocked': 0, 'connections': 1}
+  improved move: {'pieces': 1, 'mills': 0, 'threats': 1, 'forks': 0, 'mobility': 2, 'blocked': 0, 'connections': 3}
 
-Why we prefer the improved move: Both moves close a mill and remove the same Black piece, so the original function gives them the same score and keeps the first one, d0. The improved function prefers a6, which lies on three mill lines, over d0, which lies on one. After the move, White's connection advantage is 7 instead of 5, White has 2 more free neighboring squares than Black instead of an equal number, and one blocked piece more than Black instead of two. The search also checked Black's reply at depth 2.
+Why we prefer the improved move: Both placements create an a0-d0-g0 mill threat. The baseline keeps d0 because the material scores tie. The improved move chooses g0, which belongs to three mill lines rather than one. After the move, White's connectivity advantage is 3 instead of 1 and its mobility advantage is 2 instead of 0. The depth-2 search also considers Black's reply. These are positional preferences, not a forced-win claim.
 
 Case 2 (midgame, depth 2)
 Input board: WxWWxWWWWWBBBBBBBBxxxxx
@@ -103,4 +104,4 @@ Feature differences after each move (White minus Black):
   original move: {'pieces': 0, 'mills': 0, 'threats': 1, 'forks': 0, 'mobility': 3, 'blocked': -1, 'connections': 2}
   improved move: {'pieces': 0, 'mills': -1, 'threats': 2, 'forks': 0, 'mobility': 2, 'blocked': -1, 'connections': -1}
 
-Why we prefer the improved move: It slides b1 to d1. From d1 the piece can slide on to d0 and close a0-d0-g0, and a0 or b3 can slide into b1 and close b1-d1-f1, so White has two different mill-closing squares instead of one: the threat difference becomes +2 instead of +1. Black would need two moves to cover both. The price is that White's a0-b1-c2 mill is open for now (mills -1 instead of 0) and its mobility lead is +2 instead of +3. The original move, a3 to a6, blocks Black's c4-b5-a6 line and leaves Black 5 moves instead of 6, which is the only thing besides material that the original midgame function measures.
+Why we prefer the improved move: It slides b1 to d1. From d1 the piece can slide on to d0 and close a0-d0-g0, and a0 or b3 can slide into b1 and close b1-d1-f1, so White has two different mill-closing squares instead of one: the threat difference becomes +2 instead of +1. Black cannot occupy both destinations in one move, but may disrupt the threats by capturing a supporting piece. The price is that White's a0-b1-c2 mill is open for now (mills -1 instead of 0) and its mobility lead is +2 instead of +3. The original move, a3 to a6, blocks Black's c4-b5-a6 line and leaves Black 5 moves instead of 6, which is the only thing besides material that the original midgame function measures.

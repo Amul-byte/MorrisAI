@@ -51,16 +51,16 @@ class GameMinimax:
         if self.judge_horizon:
             winner = game_winner(board, turn)
             if winner:
-                return self.finished(winner)
+                return self.finished(board, winner)
         if depth == 0:
             return self.score(board)
         winner = game_winner(board, turn)
         if winner:
-            return self.finished(winner)
+            return self.finished(board, winner)
         return None
 
-    def finished(self, winner):
-        self.positions_evaluated += 1
+    def finished(self, board, winner):
+        self.score(board)  # Count one estimator call, then apply the terminal result.
         return self.win_score if winner == "W" else -self.win_score
 
     def score(self, board):
