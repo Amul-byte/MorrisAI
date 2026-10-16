@@ -1,10 +1,6 @@
-"""Part IV: MINIMAX for the opening with the improved static estimator, playing White.
+"""MINIMAX for the opening with the improved estimator (see MyStaticEstimation.txt).
 
-    python3 MiniMaxOpeningImproved.py <input board file> <output board file> <depth>
-
-Same input, output, and search as MiniMaxOpening.py. The only change is
-the function that scores a position: improved() in morris/evaluation.py,
-explained in MyStaticEstimation.txt.
+Usage: python3 MiniMaxOpeningImproved.py <input> <output> <depth>
 """
 
 from morris.cli import read_arguments, report

@@ -1,17 +1,4 @@
-"""Command line shared by the eight assignment programs, and board-file output.
-
-Every program is run as
-
-    python3 MiniMaxOpening.py <input board file> <output board file> <depth>
-
-and finishes by writing the chosen board to the output file and printing:
-
-    Board Position: <23 characters>
-    Positions evaluated by static estimation: <count>
-    MINIMAX estimate: <integer>
-
-The alpha-beta programs and TournamentAgent.py print the same three lines.
-"""
+"""Argument parsing and output shared by the assignment programs."""
 
 import argparse
 import os

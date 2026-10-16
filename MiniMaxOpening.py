@@ -1,21 +1,6 @@
-"""Part I: MINIMAX for the opening, playing White.
+"""MINIMAX for the opening (White).
 
-    python3 MiniMaxOpening.py <input board file> <output board file> <depth>
-
-Reads a board, picks White's best placement found by MINIMAX searching
-<depth> turns ahead (at least 1), writes the new board to the output file,
-and prints:
-
-    Board Position: <the new board>
-    Positions evaluated by static estimation: <calls to the static estimator>
-    MINIMAX estimate: <value of the chosen move>
-
-In the opening a move places one piece on an empty square. A placement
-that closes a mill also removes one opponent piece that is not in a mill.
-The opening generator is used at every level of the search, because the
-command line gives the phase but not how many pieces are still to place.
-The board, the move generator, and the static estimators are shared by
-every program and live in the morris/ folder.
+Usage: python3 MiniMaxOpening.py <input> <output> <depth>
 """
 
 from math import inf
@@ -26,12 +11,7 @@ from morris.evaluation import baseline
 
 
 class OpeningMinimax:
-    """MINIMAX over opening placements. White maximizes, Black minimizes.
-
-    A position is scored by the static estimator when the search depth runs
-    out or when the side to move has no empty square left. Each of those
-    scores adds one to positions_evaluated.
-    """
+    """White maximizes, Black minimizes. positions_evaluated counts estimator calls."""
 
     def __init__(self, estimate=baseline):
         self.estimate = estimate
@@ -47,14 +27,12 @@ class OpeningMinimax:
         best_board, best_value = moves[0], -inf
         for child in moves:
             value = self.min_value(child, depth - 1)
-            # Only a strictly larger value replaces the choice, so a tie keeps
-            # the earlier generated move. Alpha-beta uses the same rule.
+            # Strictly greater, so a tie keeps the earlier move.
             if value > best_value:
                 best_board, best_value = child, value
         return best_board, best_value
 
     def max_value(self, board, depth):
-        """White to move: the largest value White can reach."""
         if depth == 0:
             return self.score(board)
         moves = generate_moves(board, "W", True)
@@ -63,7 +41,6 @@ class OpeningMinimax:
         return max(self.min_value(child, depth - 1) for child in moves)
 
     def min_value(self, board, depth):
-        """Black to move: the smallest value Black can reach."""
         if depth == 0:
             return self.score(board)
         moves = generate_moves(board, "B", True)

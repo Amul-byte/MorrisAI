@@ -1,13 +1,6 @@
-"""Part IV: MINIMAX for the midgame and endgame with the improved static estimator, playing White.
+"""MINIMAX for the midgame and endgame with the improved estimator (see MyStaticEstimation.txt).
 
-    python3 MiniMaxGameImproved.py <input board file> <output board file> <depth>
-
-Same input, output, and search as MiniMaxGame.py, with two changes:
-
-  - positions are scored by improved() in morris/evaluation.py,
-    explained in MyStaticEstimation.txt;
-  - a finished game is recognized at the depth limit too, and scores
-    +/-1000000 (WIN), so no positional score can outrank a real result.
+Usage: python3 MiniMaxGameImproved.py <input> <output> <depth>
 """
 
 from morris.cli import read_arguments, report
