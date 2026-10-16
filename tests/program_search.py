@@ -1,10 +1,3 @@
-"""Run the assignment programs' own search classes for the tests and tools.
-
-fixed_search(board, depth, opening, side=..., pruning=..., enhanced=...)
-picks the class and estimator that the matching program uses, so a test
-checks exactly the code that MiniMaxOpening.py, ABGame.py, and the others run.
-"""
-
 from types import SimpleNamespace
 
 from ABGame import GameAlphaBeta
