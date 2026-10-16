@@ -1,0 +1,90 @@
+Morris AI - Team 7
+
+Improved static estimation (Part IV)
+
+This file explains:
+  1. the features used by the evaluation function,
+  2. why they were selected,
+  3. how they are combined,
+  4. why the result is better than the original evaluation function,
+and gives at least two board positions where the improved function selects a different move than the original one (section 5).
+
+
+1. FEATURES USED
+
+Each feature is computed for both players. The score uses the difference, White's count minus Black's count, so a positive score favors White. The Black programs swap colors before searching, so for them a positive score favors Black.
+
+P  Pieces: number of pieces on the board.
+M  Mills: completed mills. Each of the 18 mill lines is counted once.
+T  Threats: empty locations that would complete a mill line holding two own
+   pieces and no opposing piece. In the opening any such location counts. In
+   the midgame/endgame a piece must be able to reach it: an own piece next to
+   it that is not one of the two on the line, or any piece when hopping.
+F  Forks (opening only): empty locations where one placement would start two
+   different threats at once.
+V  Mobility: in the midgame/endgame, the number of slides, before counting
+   the different captures a move could make. A player with exactly three
+   pieces can hop, so every empty location counts for each of its pieces. In
+   the opening, the number of empty locations next to own pieces.
+B  Blocked pieces: pieces with no empty neighbor. A player who can hop is
+   never blocked.
+C  Connections: for every own piece, the number of mill lines through its
+   location, added together. For example, a6 lies on three lines and d0 on one.
+
+The opening uses all seven. The midgame/endgame uses P, M, T, V, B, C.
+
+
+2. WHY THESE FEATURES WERE SELECTED
+
+Pieces (P). The game is won by reducing the opponent to two pieces, so it is the most important term in both phases.
+
+Opening (T, F, C, M). The original opening function is only the piece difference. Before the first capture it gives every placement the same score, so it cannot tell a useful placement from a useless one. A threat is a line that one more placement could complete. A fork creates threats at two different destinations. The opponent cannot occupy both in one turn, but may disrupt the threats by capturing a supporting piece. Connections reward locations that belong to several mill lines, which gives more ways to build a mill later. Mobility and blocked pieces carry small weights here, so pieces are not placed where they will be stuck when sliding starts.
+
+Midgame/endgame (T, V, B, M). In the moving phases two pieces on a line are not enough: a piece has to be able to slide into the empty location, and that piece cannot be one of the two already on the line. T counts only those reachable locations. Mobility matters because a player with no legal move loses, and a player with few moves is close to being blocked. Blocked pieces cannot help until a route opens. Completed mills describe the current structure, but they get less weight than material and real threats.
+
+All features are simple counts on the board. The function does no search of its own, and repeated positions are looked up in a cache, so it stays fast at every leaf of the search tree.
+
+
+3. HOW THE FEATURES ARE COMBINED
+
+Weighted sum of the White-minus-Black differences:
+
+  Opening score         = 120*P + 25*M + 45*T + 20*F + 2*V - 8*B + 4*C
+  Midgame/endgame score = 1000*P + 75*M + 110*T + 8*V - 35*B + 5*C
+
+Game results come first in the midgame/endgame:
+  +1000000 if Black has 2 or fewer pieces,
+  -1000000 if White has 2 or fewer pieces.
+The search also scores a position as lost for the player to move when that player has no legal move. The positional terms add up to a few thousand at most, so they can never outrank a won or lost game.
+
+Pieces has the largest weight, so the positional terms mostly decide between moves that keep material equal. Several positional terms together can still outweigh one piece, for example many threats plus much higher mobility. The weights were chosen by hand from these priorities; they are not learned or proven optimal.
+
+
+4. WHY IT IS BETTER THAN THE ORIGINAL FUNCTION
+
+Original opening:          numWhitePieces - numBlackPieces
+Original midgame/endgame:  1000*(numWhitePieces - numBlackPieces) - numBlackMoves
+
+  - The original opening score is the same for almost every placement. The new one prefers placements that create threats, forks, and well-connected locations, before any capture is possible.
+  - The original midgame score looks only at Black's mobility. The new one measures both players' mobility, blocked pieces, and reachable mill threats.
+  - The original counts one generated position per possible capture, so a move that can capture several different pieces inflates numBlackMoves. The new mobility counts each move once.
+  - In local practice games with the same search and only the estimator changed, the improved estimator won 7, lost 0, drew 1 at 0.03 seconds per move, and won 5, lost 2, drew 1 at fixed depth 3.
+
+
+5. POSITIONS WHERE THE IMPROVED FUNCTION SELECTS A DIFFERENT MOVE
+
+The opening example is an additional position; the midgame example is drawn in the Morris Variant handout. Both use MINIMAX at depth 2. Examples.txt shows the full program output for each.
+
+Example 1 - opening
+  Input board:     WxxBxxxxxxxxxxxxxxxxxxx
+  Original move:   WWxBxxxxxxxxxxxxxxxxxxx   (place at d0)
+  Improved move:   WxWBxxxxxxxxxxxxxxxxxxx   (place at g0)
+
+  Why: Both placements create an a0-d0-g0 mill threat. The baseline keeps d0 because the material scores tie. The improved move chooses g0, which belongs to three mill lines rather than one. After the move, White's connectivity advantage is 3 instead of 1 and its mobility advantage is 2 instead of 0. The depth-2 search also considers Black's reply. These are positional preferences, not a forced-win claim.
+
+Example 2 - midgame
+  Input board:     WxWWxWWWWWBBBBBBBBxxxxx
+  Original move:   WxWWxWWWxWBBBBBBBBxxWxx   (slide a3 to a6)
+  Improved move:   WxWxWWWWWWBBBBBBBBxxxxx   (slide b1 to d1)
+
+  Why: from d1 the piece can slide on to d0 and close a0-d0-g0, and a0 or b3 can slide into b1 and close b1-d1-f1. White has two different mill-closing squares instead of one, so the threat difference becomes +2 instead of +1, and Black cannot occupy both destinations in one move. Black may still disrupt the threats by capturing a supporting piece. The price is that White's a0-b1-c2 mill is open for now and its mobility lead is +2 instead of +3. The original move blocks Black's c4-b5-a6 line and leaves Black 5 moves instead of 6, which is all the original function measures besides material. These are positional reasons, not a proof of a forced win.

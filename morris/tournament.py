@@ -1,11 +1,3 @@
-"""Time-bounded iterative-deepening alpha-beta with legal fallback moves.
-
-The search remains full-width MINIMAX with alpha-beta pruning. Ordering and
-transposition bounds never discard a branch that could change its value.
-Repetition-sensitive cached values include history: identical boards can have
-different values when one is approaching a third occurrence.
-"""
-
 from collections import Counter
 from dataclasses import dataclass
 import math
@@ -15,9 +7,20 @@ from typing import Callable
 from .board import (Board, MILLS_AT, closes_mill, game_winner,
                     generate_moves, opponent)
 from .evaluation import WIN, baseline, improved
-from .search import INF, SearchResult
 
+INF = 10**12
 PositionKey = tuple[int, int, str]
+
+
+@dataclass(slots=True)
+class SearchResult:
+    board: Board
+    score: int
+    evaluations: int
+    nodes: int
+    depth: int
+    elapsed: float = 0.0
+    timed_out: bool = False
 
 
 def position_key(board: Board, side: str) -> PositionKey:
@@ -83,7 +86,6 @@ class TournamentSearch:
                     + closes_mill(own, destination) * 1000
                     + len(MILLS_AT[destination]) * 10)
 
-        # Python's stable sort preserves canonical order on equal priorities.
         return sorted(moves, key=priority, reverse=True)
 
     def _visit(self, board: Board, side: str, placements: int, depth: int,
@@ -100,11 +102,7 @@ class TournamentSearch:
             return self._static(board, placements > 0, side), board
 
         key = (board, side, placements)
-        # A board with the same side to move cannot recur in fewer than four
-        # plies: each side must move out and back. If no position has occurred
-        # twice, a third occurrence is impossible within four further plies.
-        # Such shallow subtrees can safely share history-independent bounds.
-        # Otherwise retain the exact history, never a probabilistic hash.
+        # Nothing has occurred twice, so no third occurrence fits in four plies.
         context = None
         if self.use_table and (depth > 4 or any(c > 1 for c in self.counts.values())):
             context = frozenset(self.counts.items())
@@ -162,7 +160,6 @@ class TournamentSearch:
                time_limit: float = 180.0, max_depth: int = 64,
                history: list[tuple[Board, str]] | None = None,
                on_complete: Callable[[SearchResult], None] | None = None) -> SearchResult:
-        """History contains states BEFORE this root (not the root itself)."""
         if (not 0 <= placements <= 18 or not 1 <= max_depth <= 100
                 or not math.isfinite(time_limit) or time_limit <= 0):
             raise ValueError("Invalid placements, depth, or time budget")
@@ -185,7 +182,7 @@ class TournamentSearch:
             raise ValueError("No legal move is available")
         result = SearchResult(moves[0], 0, 0, 0, 0)
         if on_complete:
-            on_complete(result)  # durable legal fallback, even before depth 1
+            on_complete(result)
         for depth in range(1, max_depth + 1):
             try:
                 score, chosen = self._visit(board, side, placements, depth, -INF, INF)

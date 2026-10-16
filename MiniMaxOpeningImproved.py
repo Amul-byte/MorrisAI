@@ -1,7 +1,15 @@
-"""Required assignment entry point: MiniMaxOpeningImproved."""
+from morris.cli import read_arguments, report
+from morris.evaluation import improved
 
-from morris.cli import assignment_main
+from MiniMaxOpening import OpeningMinimax
+
+
+def main():
+    parser, board, output, depth = read_arguments()
+    search = OpeningMinimax(estimate=improved)
+    best_board, value = search.best_move(board, depth)
+    report(parser, output, best_board, search.positions_evaluated, value)
 
 
 if __name__ == "__main__":
-    assignment_main(opening=True, enhanced=True)
+    main()

@@ -1,9 +1,3 @@
-"""Board topology and legal moves, transcribed from the supplied handout.
-
-Two disjoint 23-bit integers hold White and Black pieces. Successors are
-deterministic: source index, neighbor order below, then captured-piece index.
-"""
-
 from dataclasses import dataclass
 from typing import Iterator
 
@@ -105,11 +99,6 @@ def _captured_positions(own: int, other: int, destination: int):
 
 
 def generate_moves(board: Board, side: str, opening: bool) -> list[Board]:
-    """Handout move generators; terminal adjudication belongs to search.
-
-    Opening deliberately has no nine-piece limit: the assignment CLI supplies
-    a phase, not placement history. Tournament search supplies that history.
-    """
     own = board.pieces(side)
     other = board.pieces(opponent(side))
     empty = FULL ^ (own | other)
@@ -136,7 +125,6 @@ def mobility(pieces: int, empty: int) -> int:
 
 
 def game_winner(board: Board, side_to_move: str) -> str | None:
-    """Call only AFTER opening. No premature losses during placement."""
     own, other = board.pieces(side_to_move), board.pieces(opponent(side_to_move))
     if own.bit_count() <= 2:
         return opponent(side_to_move)

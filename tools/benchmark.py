@@ -1,5 +1,3 @@
-"""Paired local practice games; never reports official tournament results."""
-
 import argparse
 from collections import Counter
 import json

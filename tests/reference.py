@@ -1,8 +1,3 @@
-"""Slow string-based oracle, derived from the labeled lines in PDF p.1.
-
-Do not import the engine's topology or move-generation implementation here.
-"""
-
 LABELS = "a0 d0 g0 b1 d1 f1 c2 e2 a3 b3 c3 e3 f3 g3 c4 d4 e4 b5 d5 f5 a6 d6 g6".split()
 LINES = [line.split() for line in (
     "a0 d0 g0", "b1 d1 f1", "c2 e2", "a3 b3 c3", "e3 f3 g3",

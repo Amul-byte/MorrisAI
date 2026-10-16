@@ -1,5 +1,3 @@
-"""Fixed-depth cold-cache comparison of tournament transposition caching."""
-
 import json
 from pathlib import Path
 import platform

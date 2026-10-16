@@ -1,7 +1,14 @@
-"""Required assignment entry point: MiniMaxGameBlack."""
+from morris.cli import read_arguments, report
 
-from morris.cli import assignment_main
+from MiniMaxGame import GameMinimax
+
+
+def main():
+    parser, board, output, depth = read_arguments()
+    search = GameMinimax()
+    swapped_choice, value = search.best_move(board.swapped(), depth)
+    report(parser, output, swapped_choice.swapped(), search.positions_evaluated, value)
 
 
 if __name__ == "__main__":
-    assignment_main(opening=False, side="B")
+    main()

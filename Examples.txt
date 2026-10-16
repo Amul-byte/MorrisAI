@@ -1,0 +1,107 @@
+Morris AI - Team 7
+
+This file answers two requirements of the project handout:
+  Part II: at least two cases where ALPHA-BETA evaluates fewer positions than MINIMAX,
+           with the same MINIMAX estimate and the same move.
+  Part IV: at least two board positions where the improved static estimation selects
+           a different move than the original one, with a reason for preferring it.
+
+Each case shows the exact command and the three lines the submitted program printed.
+Input files in assets/: two handout positions and one additional opening position:
+  assets/handout_position_1.txt = xxxxxBxWWWWWBBBBxxxxxxx
+  assets/handout_position_2.txt = WxWWxWWWWWBBBBBBBBxxxxx
+  assets/improved_opening.txt = WxxBxxxxxxxxxxxxxxxxxxx
+Depth counts individual turns (plies). "Positions evaluated" counts calls to the static estimator.
+
+
+PART II: ALPHA-BETA EVALUATES FEWER POSITIONS THAN MINIMAX
+
+Case 1 (opening, depth 3)
+Input board: xxxxxBxWWWWWBBBBxxxxxxx
+
+MINIMAX:
+  $ python3 MiniMaxOpening.py assets/handout_position_1.txt board2.txt 3
+  Board Position: xxxxxxxWWWWWBBBBWxxxxxx
+  Positions evaluated by static estimation: 3778
+  MINIMAX estimate: 2
+
+ALPHA-BETA:
+  $ python3 ABOpening.py assets/handout_position_1.txt board2.txt 3
+  Board Position: xxxxxxxWWWWWBBBBWxxxxxx
+  Positions evaluated by static estimation: 481
+  MINIMAX estimate: 2
+
+Selected move: White places a piece at e4 and removes the Black piece at f1
+Same move and same MINIMAX estimate (2). Alpha-beta evaluated 481 positions instead of 3778 (87% fewer).
+Alpha-beta stops exploring a branch once it cannot change the decision above it.
+Both searches try moves in the same order and keep the first move on a tie.
+
+Case 2 (midgame, depth 3)
+Input board: WxWWxWWWWWBBBBBBBBxxxxx
+
+MINIMAX:
+  $ python3 MiniMaxGame.py assets/handout_position_2.txt board2.txt 3
+  Board Position: xWWWxWWWWWBBBBBBBBxxxxx
+  Positions evaluated by static estimation: 544
+  MINIMAX estimate: 993
+
+ALPHA-BETA:
+  $ python3 ABGame.py assets/handout_position_2.txt board2.txt 3
+  Board Position: xWWWxWWWWWBBBBBBBBxxxxx
+  Positions evaluated by static estimation: 129
+  MINIMAX estimate: 993
+
+Selected move: White moves a0 to d0
+Same move and same MINIMAX estimate (993). Alpha-beta evaluated 129 positions instead of 544 (76% fewer).
+Alpha-beta stops exploring a branch once it cannot change the decision above it.
+Both searches try moves in the same order and keep the first move on a tie.
+
+
+PART IV: IMPROVED STATIC ESTIMATION SELECTS A DIFFERENT MOVE
+Scores from the two estimators use different scales. We compare the chosen moves, not the numbers.
+
+Case 1 (opening, depth 2)
+Input board: WxxBxxxxxxxxxxxxxxxxxxx
+
+ORIGINAL ESTIMATION:
+  $ python3 MiniMaxOpening.py assets/improved_opening.txt board2.txt 2
+  Board Position: WWxBxxxxxxxxxxxxxxxxxxx
+  Positions evaluated by static estimation: 420
+  MINIMAX estimate: 0
+  Move: White places a piece at d0
+
+IMPROVED ESTIMATION:
+  $ python3 MiniMaxOpeningImproved.py assets/improved_opening.txt board2.txt 2
+  Board Position: WxWBxxxxxxxxxxxxxxxxxxx
+  Positions evaluated by static estimation: 420
+  MINIMAX estimate: -4
+  Move: White places a piece at g0
+
+Feature differences after each move (White minus Black):
+  original move: {'pieces': 1, 'mills': 0, 'threats': 1, 'forks': 0, 'mobility': 0, 'blocked': 0, 'connections': 1}
+  improved move: {'pieces': 1, 'mills': 0, 'threats': 1, 'forks': 0, 'mobility': 2, 'blocked': 0, 'connections': 3}
+
+Why we prefer the improved move: Both placements create an a0-d0-g0 mill threat. The baseline keeps d0 because the material scores tie. The improved move chooses g0, which belongs to three mill lines rather than one. After the move, White's connectivity advantage is 3 instead of 1 and its mobility advantage is 2 instead of 0. The depth-2 search also considers Black's reply. These are positional preferences, not a forced-win claim.
+
+Case 2 (midgame, depth 2)
+Input board: WxWWxWWWWWBBBBBBBBxxxxx
+
+ORIGINAL ESTIMATION:
+  $ python3 MiniMaxGame.py assets/handout_position_2.txt board2.txt 2
+  Board Position: WxWWxWWWxWBBBBBBBBxxWxx
+  Positions evaluated by static estimation: 31
+  MINIMAX estimate: -11
+  Move: White moves a3 to a6
+
+IMPROVED ESTIMATION:
+  $ python3 MiniMaxGameImproved.py assets/handout_position_2.txt board2.txt 2
+  Board Position: WxWxWWWWWWBBBBBBBBxxxxx
+  Positions evaluated by static estimation: 31
+  MINIMAX estimate: -50
+  Move: White moves b1 to d1
+
+Feature differences after each move (White minus Black):
+  original move: {'pieces': 0, 'mills': 0, 'threats': 1, 'forks': 0, 'mobility': 3, 'blocked': -1, 'connections': 2}
+  improved move: {'pieces': 0, 'mills': -1, 'threats': 2, 'forks': 0, 'mobility': 2, 'blocked': -1, 'connections': -1}
+
+Why we prefer the improved move: It slides b1 to d1. From d1 the piece can slide on to d0 and close a0-d0-g0, and a0 or b3 can slide into b1 and close b1-d1-f1, so White has two different mill-closing squares instead of one: the threat difference becomes +2 instead of +1. Black cannot occupy both destinations in one move, but may disrupt the threats by capturing a supporting piece. The price is that White's a0-b1-c2 mill is open for now (mills -1 instead of 0) and its mobility lead is +2 instead of +3. The original move, a3 to a6, blocks Black's c4-b5-a6 line and leaves Black 5 moves instead of 6, which is the only thing besides material that the original midgame function measures.
