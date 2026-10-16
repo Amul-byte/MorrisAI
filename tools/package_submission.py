@@ -1,15 +1,3 @@
-"""Build the submission folder and ZIP, then run every program from a clean copy.
-
-    python3 -m tools.package_submission
-
-Output: dist/MorrisAI-submission/ and dist/MorrisAI-submission.zip, laid out as
-
-    MiniMaxOpening.py ... MiniMaxGameImproved.py, TournamentAgent.py
-    Examples.txt, MyStaticEstimation.txt
-    morris/     board, move generator, estimators, command line, tournament search
-    assets/     the empty board and the two handout positions
-"""
-
 from pathlib import Path
 import shutil
 import subprocess
