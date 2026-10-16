@@ -35,7 +35,30 @@ ties choose the first generated move, including in the alpha-beta scripts.
 On already-terminal game positions they return the input board; this is an
 evaluation result, not another legal move to post.
 
-## Running an actual game
+## Interactive console
+
+```sh
+python3 TournamentAgent.py
+```
+
+With no arguments the agent asks for new game or resume, your color, search
+seconds (default 180, at most 210), and maximum depth (default 64). It then
+loops: on your turn it searches and prints the two lines to copy into Teams; on
+the opponent's turn it waits for their board. A board alone, a `Move N - Color`
+header followed by the board on the next line, or both on one line are
+accepted. Lowercase `w`/`b` and quotes around the board are tolerated. A board
+that is not a legal reply, a header with the wrong move number or color, or the
+unchanged current board is rejected and the game stays as it was.
+
+Commands at the opponent prompt: `show` (board diagram and last move),
+`time N`, `depth N`, `quit`. Every accepted move is saved to
+`games/<date>-<id>-<color>.json` before anything else happens, so Ctrl-C or a
+closed terminal loses nothing; choose resume and paste that path to continue.
+On resume, the last move your team made is shown again so it is not posted
+twice. Ctrl-C during a search stops it and uses the deepest completed depth.
+The console stops by itself at a win, loss, or threefold-repetition draw.
+
+## Running an actual game one move at a time
 
 White starts from the empty board in `assets/`. This command chooses **move 1**:
 

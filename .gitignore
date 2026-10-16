@@ -6,3 +6,4 @@ board2.txt
 my-move.txt
 opponent.txt
 game-*.json
+games/
