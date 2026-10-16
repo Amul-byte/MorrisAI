@@ -1,5 +1,3 @@
-"""Atomic persistence of a tournament game log."""
-
 import json
 import os
 from pathlib import Path

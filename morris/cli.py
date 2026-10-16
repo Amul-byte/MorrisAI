@@ -1,5 +1,3 @@
-"""Argument parsing and output shared by the assignment programs."""
-
 import argparse
 import os
 from pathlib import Path
@@ -9,7 +7,6 @@ from .board import Board
 
 
 def read_arguments():
-    """Return (parser, board, output path, depth). Bad input exits with a usage message."""
     parser = argparse.ArgumentParser(description="Choose one Morris-variant move.")
     parser.add_argument("input", type=Path)
     parser.add_argument("output", type=Path)
@@ -25,7 +22,6 @@ def read_arguments():
 
 
 def report(parser, output: Path, board: Board, evaluations: int, score: int) -> None:
-    """Write the chosen board, then print the three result lines."""
     try:
         write_board(output, board)
     except (OSError, ValueError) as error:
@@ -34,7 +30,6 @@ def report(parser, output: Path, board: Board, evaluations: int, score: int) -> 
 
 
 def write_board(path: Path, board: Board) -> None:
-    """Readers see either the old complete board or the new complete board."""
     descriptor, temporary = tempfile.mkstemp(prefix=f".{path.name}.", dir=path.parent)
     try:
         with os.fdopen(descriptor, "w", encoding="utf-8") as stream:

@@ -1,8 +1,3 @@
-"""MINIMAX for the opening with the improved estimator (see MyStaticEstimation.txt).
-
-Usage: python3 MiniMaxOpeningImproved.py <input> <output> <depth>
-"""
-
 from morris.cli import read_arguments, report
 from morris.evaluation import improved
 

@@ -1,8 +1,3 @@
-"""ALPHA-BETA for the opening (White). Same move and estimate as MiniMaxOpening.py.
-
-Usage: python3 ABOpening.py <input> <output> <depth>
-"""
-
 from math import inf
 
 from morris.board import generate_moves
@@ -11,14 +6,11 @@ from morris.evaluation import baseline
 
 
 class OpeningAlphaBeta:
-    """Same move order and tie rule as OpeningMinimax."""
-
     def __init__(self, estimate=baseline):
         self.estimate = estimate
         self.positions_evaluated = 0
 
     def best_move(self, board, depth):
-        """Return (White's chosen board, its MINIMAX value)."""
         if depth == 0:
             return board, self.score(board)
         moves = generate_moves(board, "W", True)

@@ -1,8 +1,3 @@
-"""ALPHA-BETA for the midgame and endgame (White). Same move and estimate as MiniMaxGame.py.
-
-Usage: python3 ABGame.py <input> <output> <depth>
-"""
-
 from math import inf
 
 from morris.board import generate_moves
@@ -12,10 +7,7 @@ from MiniMaxGame import GameMinimax
 
 
 class GameAlphaBeta(GameMinimax):
-    """Same end-of-game rules, move order, and tie rule as GameMinimax."""
-
     def best_move(self, board, depth):
-        """Return (White's chosen board, its MINIMAX value)."""
         value = self.leaf_value(board, "W", depth)
         if value is not None:
             return board, value

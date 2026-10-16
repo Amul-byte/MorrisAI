@@ -1,8 +1,3 @@
-"""MINIMAX for the midgame and endgame with the improved estimator (see MyStaticEstimation.txt).
-
-Usage: python3 MiniMaxGameImproved.py <input> <output> <depth>
-"""
-
 from morris.cli import read_arguments, report
 from morris.evaluation import WIN, improved
 

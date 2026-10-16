@@ -1,5 +1,3 @@
-"""Prescribed estimators and an explainable, color-symmetric alternative."""
-
 from functools import lru_cache
 
 from .board import (Board, FULL, MILL_MASKS, MILLS_AT, NEIGHBOR_MASKS,
@@ -9,7 +7,6 @@ WIN = 1_000_000
 
 
 def baseline(board: Board, opening: bool) -> int:
-    """PDF p.5, verbatim formula from White's perspective."""
     white, black = board.white.bit_count(), board.black.bit_count()
     if opening:
         return white - black
@@ -24,11 +21,6 @@ def baseline(board: Board, opening: bool) -> int:
 
 
 def features(own: int, other: int, opening: bool) -> tuple[int, ...]:
-    """Material, mills, threats, forks, mobility, blocked, connectivity.
-
-    A threat counts an empty destination that can ACTUALLY complete a mill.
-    Moving a supporting piece out of that same mill does not count.
-    """
     empty = FULL ^ (own | other)
     mills = 0
     threats = 0
@@ -45,8 +37,6 @@ def features(own: int, other: int, opening: bool) -> tuple[int, ...]:
                 sources = own & ~mill
                 if own.bit_count() == 3 or sources & NEIGHBOR_MASKS[dst]:
                     threats |= vacancy
-    # A placement creating threats on two distinct squares cannot be blocked
-    # by a single placement. Count opportunities, not impossible double captures.
     forks = 0
     if opening:
         for dst in indices(empty):

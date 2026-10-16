@@ -1,8 +1,3 @@
-"""MINIMAX for the midgame and endgame (White).
-
-Usage: python3 MiniMaxGame.py <input> <output> <depth>
-"""
-
 from math import inf
 
 from morris.board import game_winner, generate_moves
@@ -13,11 +8,6 @@ HANDOUT_WIN = 10000
 
 
 class GameMinimax:
-    """White maximizes, Black minimizes. positions_evaluated counts scored positions.
-
-    judge_horizon=True (improved program) also checks for a finished game at depth 0.
-    """
-
     def __init__(self, estimate=baseline, win_score=HANDOUT_WIN, judge_horizon=False):
         self.estimate = estimate
         self.win_score = win_score
@@ -25,7 +15,6 @@ class GameMinimax:
         self.positions_evaluated = 0
 
     def best_move(self, board, depth):
-        """Return (White's chosen board, its MINIMAX value)."""
         value = self.leaf_value(board, "W", depth)
         if value is not None:
             return board, value

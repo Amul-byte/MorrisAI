@@ -1,8 +1,3 @@
-"""MINIMAX for the midgame and endgame, playing Black: swap colors, search as White, swap back.
-
-Usage: python3 MiniMaxGameBlack.py <input> <output> <depth>
-"""
-
 from morris.cli import read_arguments, report
 
 from MiniMaxGame import GameMinimax

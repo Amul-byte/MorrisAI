@@ -1,8 +1,3 @@
-"""MINIMAX for the opening, playing Black: swap colors, search as White, swap back.
-
-Usage: python3 MiniMaxOpeningBlack.py <input> <output> <depth>
-"""
-
 from morris.cli import read_arguments, report
 
 from MiniMaxOpening import OpeningMinimax

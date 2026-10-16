@@ -1,9 +1,3 @@
-"""Tournament runner with move-number tracking and optional persistent history.
-
-    python3 TournamentAgent.py              interactive console (new game or resume)
-    python3 TournamentAgent.py input output --side W --move-number 1 [--history game.json]
-"""
-
 import argparse
 from collections import Counter
 from datetime import datetime
@@ -21,11 +15,6 @@ from morris.tournament import TournamentSearch, position_key
 
 
 def load_history(path: Path | None, board: Board, side: str, move_number: int):
-    """An existing log ends at the last selected move; validate the reply.
-
-    Each entry describes the board BEFORE the numbered move. This lets two
-    operators use separate logs, or lets both programs share a single log.
-    """
     current = {"move": move_number, "turn": side, "board": str(board)}
     entries = []
     if path and path.exists():
@@ -42,7 +31,6 @@ def load_history(path: Path | None, board: Board, side: str, move_number: int):
 
 
 def validate_log(entries) -> Counter:
-    """Check every entry and step of a game log; return how often each state occurred."""
     if not isinstance(entries, list) or not entries:
         raise ValueError("History must be a nonempty JSON list")
     previous = None
@@ -83,7 +71,7 @@ def validate_transition(previous: dict, current: dict) -> None:
 SESSION_DIR = Path(__file__).resolve().parent / "games"
 HEADER = re.compile(r"Move\s+(\d+)\s*[-–—]\s*(White|Black)\s*:?", re.IGNORECASE)
 NAMES = {"W": "White", "B": "Black"}
-POSTING_MARGIN = 180  # Above this, less than a minute of the 4 minutes is left to post.
+POSTING_MARGIN = 180
 START = {"move": 1, "turn": "W", "board": "x" * 23}
 
 
@@ -135,7 +123,6 @@ def load_session(path: Path) -> dict:
 
 
 def game_over(entries: list[dict]) -> str | None:
-    """'W' or 'B' for a win, 'draw' for threefold repetition, None while the game goes on."""
     last = entries[-1]
     if last["move"] > 18:
         winner = game_winner(Board.parse(last["board"]), last["turn"])
@@ -146,13 +133,11 @@ def game_over(entries: list[dict]) -> str | None:
 
 
 def teams_message(entries: list[dict]) -> str:
-    """The last entry is the position after a move, so the mover is the other side."""
     last = entries[-1]
     return f"Move {last['move'] - 1} - {NAMES[opponent(last['turn'])]}\n{last['board']}"
 
 
 def parse_opponent(text: str, state: dict) -> Board | None:
-    """Accept a board alone, a Teams header alone, or a header and board on one line."""
     header = HEADER.match(text)
     if header:
         number, name = header.groups()
@@ -161,7 +146,7 @@ def parse_opponent(text: str, state: dict) -> Board | None:
             raise ValueError(f"Expected {expected}.")
         text = text[header.end():].strip()
         if not text:
-            return None  # A two-line paste sends the board on the next line.
+            return None
     text = text.strip("\"'` ").translate(str.maketrans("wbX", "WBx"))
     return Board.parse(text)
 
@@ -245,7 +230,6 @@ def play_session(session: dict, path: Path, read=input, write=print) -> None:
         except ValueError as error:
             write(f"Invalid input: {error} Game unchanged; paste again.")
             continue
-        # Saved before searching, so a resumed session continues from this position.
         session["history"] = entries + [{"move": move + 1, "turn": opponent(state["turn"]),
                                          "board": str(reply)}]
         write_history(path, session)
@@ -267,7 +251,6 @@ def ask(prompt: str, convert, valid, default=None, read=input, write=print):
 
 
 def run_console(read=input, write=print, session_dir: Path = SESSION_DIR) -> int:
-    """Start or resume a game in the terminal. Returns the exit code."""
     path = None
     try:
         write("MORRIS TOURNAMENT CONSOLE")
@@ -310,7 +293,8 @@ def run_console(read=input, write=print, session_dir: Path = SESSION_DIR) -> int
 def main() -> None:
     if len(sys.argv) == 1:
         sys.exit(run_console())
-    parser = argparse.ArgumentParser(description=__doc__)
+    parser = argparse.ArgumentParser(
+        description="Tournament runner with move-number tracking and optional persistent history.")
     parser.add_argument("input", type=Path)
     parser.add_argument("output", type=Path)
     parser.add_argument("--side", choices=("W", "B"), required=True)
