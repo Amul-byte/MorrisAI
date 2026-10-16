@@ -72,6 +72,7 @@ SESSION_DIR = Path(__file__).resolve().parent / "games"
 HEADER = re.compile(r"Move\s+(\d+)\s*[-–—]\s*(White|Black)\s*:?", re.IGNORECASE)
 NAMES = {"W": "White", "B": "Black"}
 POSTING_MARGIN = 180
+MAX_SECONDS = 3600
 START = {"move": 1, "turn": "W", "board": "x" * 23}
 
 
@@ -96,8 +97,8 @@ def format_board(board: str) -> str:
 
 
 def check_settings(seconds, depth) -> None:
-    if type(seconds) not in (int, float) or not math.isfinite(seconds) or not 0 < seconds <= 210:
-        raise ValueError("Search time must be greater than 0 and at most 210 seconds")
+    if type(seconds) not in (int, float) or not math.isfinite(seconds) or not 0 < seconds <= MAX_SECONDS:
+        raise ValueError(f"Search time must be greater than 0 and at most {MAX_SECONDS} seconds")
     if type(depth) is not int or not 1 <= depth <= 100:
         raise ValueError("Maximum depth must be between 1 and 100 plies")
 
@@ -211,7 +212,7 @@ def play_session(session: dict, path: Path, read=input, write=print) -> None:
                 depth = int(value) if name == "depth" else session["depth"]
                 check_settings(seconds, depth)
             except ValueError:
-                write("Use time N (0 < N <= 210 seconds) or depth N (1 to 100). Settings unchanged.")
+                write(f"Use time N (0 < N <= {MAX_SECONDS} seconds) or depth N (1 to 100). Settings unchanged.")
                 continue
             session.update(seconds=seconds, depth=depth)
             write_history(path, session)
@@ -264,8 +265,8 @@ def run_console(read=input, write=print, session_dir: Path = SESSION_DIR) -> int
             color = ask("Your color [white/black]: ", str.lower,
                         lambda s: s in ("white", "black", "w", "b"), read=read, write=write)
             side = color[0].upper()
-            seconds = ask("Search seconds [Enter=180; use 2 for practice]: ", float,
-                          lambda n: math.isfinite(n) and 0 < n <= 210, 180.0, read, write)
+            seconds = ask(f"Search seconds [Enter=180, up to {MAX_SECONDS}; use 2 for practice]: ", float,
+                          lambda n: math.isfinite(n) and 0 < n <= MAX_SECONDS, 180.0, read, write)
             depth = ask("Maximum depth [1..100, Enter=64]: ", int,
                         lambda n: 1 <= n <= 100, 64, read, write)
             session_dir.mkdir(parents=True, exist_ok=True)
@@ -301,13 +302,13 @@ def main() -> None:
     parser.add_argument("--move-number", type=int, required=True,
                         help="number of the move YOU are about to make (1-based)")
     parser.add_argument("--time-limit", type=float, default=180,
-                        help="search seconds, 0 < seconds <= 210; default 180")
+                        help=f"search seconds, 0 < seconds <= {MAX_SECONDS}; default 180")
     parser.add_argument("--max-depth", type=int, default=64)
     parser.add_argument("--history", type=Path,
                         help="JSON game log; created if absent and updated after search")
     args = parser.parse_args()
-    if not math.isfinite(args.time_limit) or not 0 < args.time_limit <= 210:
-        parser.error("time limit must be greater than 0 and at most 210 seconds")
+    if not math.isfinite(args.time_limit) or not 0 < args.time_limit <= MAX_SECONDS:
+        parser.error(f"time limit must be greater than 0 and at most {MAX_SECONDS} seconds")
     if not 1 <= args.max_depth <= 100:
         parser.error("max depth must be between 1 and 100 plies")
     try:

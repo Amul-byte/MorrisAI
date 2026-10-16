@@ -81,7 +81,7 @@ class ConsoleTests(unittest.TestCase):
         self.assertEqual(code, 0)
         self.assertIn("Stopped. Accepted moves are already saved.", text)
         bad = self.dir / "bad.json"
-        bad.write_text('{"version": 1, "side": "W", "seconds": 999, "depth": 2, "history": []}')
+        bad.write_text('{"version": 1, "side": "W", "seconds": 99999, "depth": 2, "history": []}')
         self.output.clear()
         code, _ = self.run_console(["resume", str(bad)])
         self.assertEqual(code, 2)

@@ -42,7 +42,7 @@ python3 TournamentAgent.py
 ```
 
 With no arguments the agent asks for new game or resume, your color, search
-seconds (default 180, at most 210), and maximum depth (default 64). It then
+seconds (default 180, at most 3600), and maximum depth (default 64). It then
 loops: on your turn it searches and prints the two lines to copy into Teams; on
 the opponent's turn it waits for their board. A board alone, a `Move N - Color`
 header followed by the board on the next line, or both on one line are
@@ -89,7 +89,8 @@ If no iteration finishes, stderr explicitly identifies the placeholder estimate.
 
 The default search budget is 180 seconds, reserving about one minute of the
 four-minute turn for starting the program and posting the move. The largest
-accepted budget is 210 seconds. Start promptly and account for the actual Teams
+accepted budget is 3600 seconds; anything above 180 prints a warning, because
+it leaves less than a minute of the 4-minute turn to post. Start promptly and account for the actual Teams
 timestamp; a local search deadline cannot control operator delay or OS stalls.
 Use `--max-depth 4 --time-limit 1` for quick practice.
 
